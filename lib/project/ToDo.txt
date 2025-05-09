@@ -1,0 +1,12 @@
+1. Tillståndsdiagram.
+
+2. Koda programmet.
+
+3. Bygga produkten.
+
+4. kretsschema.
+
+5. skriva om Technical Requirements.
+
+6. Slutligen efter allt, uppdatera alla dokument. 
+
