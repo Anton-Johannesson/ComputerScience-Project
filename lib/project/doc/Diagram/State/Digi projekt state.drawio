@@ -79,6 +79,9 @@
                 <mxCell id="euGNU8yXRifYHOfMBaxw-50" value="- 1 - - /" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;rotation=0;" parent="WIyWlLk6GJQsqaUBKTNV-1" vertex="1">
                     <mxGeometry x="100" y="520" width="60" height="30" as="geometry"/>
                 </mxCell>
+                <mxCell id="0" value="&lt;font style=&quot;font-size: 30px;&quot;&gt;&lt;b&gt;State Machine(Mealy)&lt;/b&gt;&lt;/font&gt;" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" vertex="1" parent="WIyWlLk6GJQsqaUBKTNV-1">
+                    <mxGeometry x="275" y="280" width="330" height="50" as="geometry"/>
+                </mxCell>
             </root>
         </mxGraphModel>
     </diagram>
