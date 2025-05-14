@@ -1,21 +1,26 @@
-1. Tillståndsdiagram.
+1. Tillståndsdiagram. 
+	klart
 
-2. Koda programmet.
+2. Koda programmet. 
+	håller på 
 
-3. Bygga produkten.
+3. Bygga produkten. 
+	klart
 
-4. kretsschema.
+4. kretsschema. 
+	pågående
 
-5. skriva om Technical Requirements.
+5. skriva om Technical Requirements. 
+	klart
 
 6. Slutligen efter allt, uppdatera alla dokument. 
+	-- inte product specification
 
-7. Presentation
+7. Presentation 
+	pågående, manus och bilder kvar
+
 
 Se skannade dokument för vad som måste uppdarteras
-
-Check 123
-
 
 Se nedan text, viktigt då den förklarar vad vi ska göra, har ni frågor fråga mig Anton eller Alan
 Kolla även state Machine 2.0 för vidare tolkning
