@@ -15,3 +15,32 @@
 Se skannade dokument för vad som måste uppdarteras
 
 Check 123
+
+
+Se nedan text, viktigt då den förklarar vad vi ska göra, har ni frågor fråga mig Anton eller Alan
+Kolla även state Machine 2.0 för vidare tolkning
+
+
+
+S1:
+Detta state kommer endast ha 2 funktioner till sig, 
+1. läsa värden från sensorerna, detta sker i detta tillstånd men även i bakgrunden på alla andra tillstånd exempelvis S3 för att kontrollera så
+	neopixel ska sluta blinka osv
+2. Vi kommer även att visa värden från varje sensor här på alpha numeric screen(display), där varje sensor kan visa sitt läs värde var 10 sekund, det 
+	innebär att temp sensor har 10 sekunder på sig att visa dens läs värde sen visas nästa sensor osv. detta sker hela tiden i bakgrunden
+	Default för display är att visa varje sensors värde var 10 sekund
+S2:
+Här kontrollerar vi läs värden från sensorer med gränsvärdet vi satt på varje sensor, det innebär att om läs värde på temp sensor är 30 grader
+men vi har en gräns på 20 grader, så ska vi skickas vidare till S4, annars skickas vi tillbaka till S1 för att bara loopa i all oändlighet då inget "händer"
+S3:
+Här gör vi flera olika saker, både samtidigt men också olika tillfällen
+1. NeoPixel, används för att redovisa vilken sensor de gäller och displayen visar värdet för just den sensor, så har man en sensor visas en specifik färg
+på neoPixel och läs värdet för sensorn på displayen. Har man två eller fler sensorer som har värde > gräns kommer färgerna skifta, dvs t. ex. har vi
+grön, gul, röd då blinkar grön en gång och värdet på denna sensor visas på dispalyen, sen blinkar gul och dens sensors värde visas på displayen osv. 
+detta sker då hela tiden flera gånger, om man kan göra så att den visar en sensor i typ 5 sekunder sen bytar den uppskattas det
+2. vi har också en button, denna button kommer endast göra något när den trycks i. Om nedtryckt kommer buzzern i S4 sluta pipa mennn lampor och 
+display fortfarande igång så länge värde > gräns, så fort värde < gräns kommer lampa avslutas och display går tillbaka till default
+3. Sen har vi såklart delay, som möjliggör för systemet att kunna ha buzzer igång osv 
+S4:
+detta tillstånd kommer att vara signalen för att buzzer, neopixel och display ska gå in i det som sker i S3, det innebär att detta tillstånd bara markerar att 
+okej nu har vi problem eller för dåliga värden, något inte stämmer. då kommer man först till S4 och sedan direkt skickas till S3  
