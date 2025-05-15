@@ -8,41 +8,60 @@ import adafruit_sgp30
 import adafruit_ht16k33
 from adafruit_ht16k33 import segments
 import asyncio
+import neopixel
 
-TVOC_LIMIT = 2000
-CO2_LIMIT = 1000
-TEMP_LIMIT = 32
-HUMIDITY_LIMIT = 70
+# limits for values [CO2, TVOC, temp, humidity]
+LIMITS = [1000, 100, 32, 90]
 
 # initialize button
 button = digitalio.DigitalInOut(board.D9)
 button.direction = digitalio.Direction.INPUT
 button.pull = digitalio.Pull.UP
 
+#initialize neopixel
+pixels = neopixel.NeoPixel(board.NEOPIXEL, 1)
+
 # initalize I2C bus for stemma
 i2c = busio.I2C(board.SCL, board.SDA, frequency=100000)
 i2c.try_lock()
 
-# startvalues
+# start values
 value_state = 0
 state = 0
 button_pressed = False
 alarm = False
 
-def stop_alarm(buzzer):
-    buzzer.deinit()
+# 
+def stop_alarm():
+    global buzzer
+    buzzer.duty_cycle = 0
+    return
         
+# 
 def start_alarm():
-    buzzer = pwmio.PWMOut(board.D10, duty_cycle = 2 ** 10, frequency = 660)
-    return buzzer
-        
+    global buzzer
+    buzzer.duty_cycle = 2 ** 10
+    return
+
+# 
 def delay(delay_time):
     global button_pressed
     start = time.monotonic()
-    end = time.monotonic()
     while delay_time > time.monotonic() - start:
-        if not button.value == True:
+        if not button.value:
+            print("button pressed")
             button_pressed = True
+    return        
+            
+#
+def delay_alarm():
+    global button_pressed
+    while not button_pressed:
+        delay(1)
+        if button_pressed:
+            stop_alarm()
+            button_pressed = False
+    return
 
 # Check to see if all modules are connected to the microcontroller
 def start():
@@ -61,11 +80,22 @@ def start():
     gas_sensor = adafruit_sgp30.Adafruit_SGP30(i2c)
     temp_and_humidity_sensor = adafruit_ahtx0.AHTx0(i2c)
     display = adafruit_ht16k33.segments.Seg14x4(i2c)
+    buzzer = pwmio.PWMOut(board.D10, duty_cycle = 0, frequency = 660)
     
-    return gas_sensor, temp_and_humidity_sensor, display
+    return gas_sensor, temp_and_humidity_sensor, display, buzzer
 
-def display_values(value):
-    display.print(f" {value}")
+def display_values(values):
+    global value_state
+    if value_state == 0:
+        display.print(f" {values[value_state]}")
+    elif value_state == 1:
+        display.print(f"   {values[value_state]}")
+    elif value_state == 2:
+        display.print(f"{values[value_state]:.1f}C")
+    elif value_state == 3:
+        display.print(f" {values[value_state]:.1f}")
+    else:
+        value_state = 0
     return
 
 def read_values():
@@ -76,28 +106,38 @@ def read_values():
         return [CO2, TVOC, temp, humidity]
     
 
-gas_sensor, temp_and_humidity_sensor, display = start()
+gas_sensor, temp_and_humidity_sensor, display, buzzer = start()
 
 while True:
+    
+    # S1 Read values and send to comparison
     if state == 0:
         values = read_values()
         display_values(values)
+        print(values)
+        print(value_state)
         state = 1
 
+    # S2 Compare values and send to delay or alarm
     elif state == 1:
-        if value in values > :
-            state = 3
-        else:
-            state = 2
+        state = 2
+        for i in range(len(values)):
+            if values[i] > LIMITS[i]:
+                state = 3
+                value_state = i
+                alarm = True
+            
+        display_values(values)
 
     elif state == 2:
-        
-        if not alarm:
-            delay(1)
+        if alarm:
+            delay_alarm()
         else:
-            delay(20)
-        state = 3
+            delay(2)
+        
+        value_state += 1
+        state = 0
 
     elif state == 3:
         start_alarm()
-        state = 0
+        state = 2
