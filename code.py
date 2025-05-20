@@ -11,12 +11,15 @@ import asyncio
 import neopixel
 
 # limits for values [CO2, TVOC, temp, humidity]
-LIMITS = [1000, 100, 32, 90]
+LIMITS = [1000, 300, 32, 70]
+
+# Colors for limits
+COLORS = [(10, 0, 0), (0, 10, 0)]
 
 # initialize button
 button = digitalio.DigitalInOut(board.D9)
 button.direction = digitalio.Direction.INPUT
-button.pull = digitalio.Pull.UP
+button.pull = digitalio.Pull.DOWN
 
 #initialize neopixel
 pixels = neopixel.NeoPixel(board.NEOPIXEL, 1)
@@ -30,6 +33,33 @@ value_state = 0
 state = 0
 button_pressed = False
 alarm = False
+
+def start_pixel():
+    global value_state
+    global pixels
+    
+    # white for CO2
+    if value_state == 0:
+        pixels[0] = (10, 10, 10)
+        
+    # green for TVOC
+    elif value_state == 1:
+        pixels[0] = (0, 10, 0)
+        
+    # red for temperature
+    elif value_state == 2:
+        pixels[0] = (10, 0, 0)
+        
+    # blue for humidity
+    else:
+        pixels[0] = (0, 0, 10)
+    return
+
+# 
+def stop_pixel():
+    global pixels
+    pixels[0] = (0, 0, 0)
+    return
 
 # 
 def stop_alarm():
@@ -48,19 +78,25 @@ def delay(delay_time):
     global button_pressed
     start = time.monotonic()
     while delay_time > time.monotonic() - start:
-        if not button.value:
-            print("button pressed")
+        if button.value:
             button_pressed = True
     return        
             
 #
 def delay_alarm():
     global button_pressed
+    global pixels
+    global alarm
+    start_pixel()
     while not button_pressed:
         delay(1)
+        print(button.value)
         if button_pressed:
             stop_alarm()
-            button_pressed = False
+            
+    stop_pixel()
+    button_pressed = False
+    alarm = False
     return
 
 # Check to see if all modules are connected to the microcontroller
@@ -139,5 +175,6 @@ while True:
         state = 0
 
     elif state == 3:
+        
         start_alarm()
         state = 2
